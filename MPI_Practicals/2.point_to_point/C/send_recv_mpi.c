@@ -2,13 +2,19 @@
 #include <stdlib.h>
 #include <mpi.h>
 
+/* program that sends a number from one process to another */
+
 int main(int argc, char *argv[]){
+
    int rank, size, number;
    char string_comm[1000];
    MPI_Status stat;
+
    MPI_Init(&argc, &argv);
+
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
    if (size!=2){
       printf("please run this with 2 processors\n");
       MPI_Finalize();

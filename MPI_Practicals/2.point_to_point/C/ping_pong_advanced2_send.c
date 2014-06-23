@@ -32,7 +32,7 @@
 
 #define number_of_messages 50
 #define start_length 8
-#define length_faktor 64
+#define length_factor 64
 #define max_length 2097152     /* 2 Mega */
 #define number_package_sizes 4
 
@@ -59,44 +59,7 @@ int main(int argc, char *argv[])
   for (i = 1; i <= number_package_sizes; i++)
   { 
     
-    if (my_rank == process_A) 
-    {
-        MPI_Send(buffer, length_of_message, MPI_FLOAT, process_B, 
-                          ping, MPI_COMM_WORLD);
-
-        MPI_Recv(buffer, length_of_message, MPI_FLOAT, process_B, 
-                       pong, MPI_COMM_WORLD, &status);
-    }
-    else if (my_rank == process_B) 
-    {
-        MPI_Recv(buffer, length_of_message, MPI_FLOAT, process_A, 
-                         ping, MPI_COMM_WORLD, &status);
-      
-        MPI_Send(buffer, length_of_message, MPI_FLOAT, process_A, 
-                          pong, MPI_COMM_WORLD);
-    }  
-
-    start = MPI_Wtime();
-    for (j = 1; j <= number_of_messages; j++)
-    {
-      if (my_rank == process_A) 
-      {
-        MPI_Send(buffer, length_of_message, MPI_FLOAT, process_B, 
-                          ping, MPI_COMM_WORLD);
-
-        MPI_Recv(buffer, length_of_message, MPI_FLOAT, process_B, 
-                       pong, MPI_COMM_WORLD, &status);
-      }
-      else if (my_rank == process_B) 
-      {
-        MPI_Recv(buffer, length_of_message, MPI_FLOAT, process_A, 
-                         ping, MPI_COMM_WORLD, &status);
-      
-        MPI_Send(buffer, length_of_message, MPI_FLOAT, process_A, 
-                          pong, MPI_COMM_WORLD);
-      }  
-    }
-    finish = MPI_Wtime();
+    // code from exercise 3
 
     if (my_rank == process_A) 
     {
@@ -109,7 +72,7 @@ int main(int argc, char *argv[])
              transfer_time*1e6,
              1.0e-6*length_of_message*sizeof(float) / transfer_time);
     }
-    length_of_message *= length_faktor;
+    length_of_message *= length_factor;
 
   }
   MPI_Finalize();

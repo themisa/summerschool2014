@@ -18,7 +18,7 @@
  * Purpose: A program to try MPI_Ssend and MPI_Recv.            *
  *                                                              *
  * Contents: C-Source                                           *
- *                                                              *
+ *modified by Themis Athanassiadou                                                              *
  ****************************************************************/
 
 
@@ -31,6 +31,9 @@
 #define pong  23
 #define number_of_messages 50
 #define length_of_message   1
+
+/* Modify your ping-pong code such that you exchange one message before entering the 50 
+   message loop*/
 
 int main(int argc, char *argv[])
 {
@@ -49,39 +52,8 @@ int main(int argc, char *argv[])
 
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-  if (my_rank == proc_A) 
-  {
-    MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_B, ping,
-                     MPI_COMM_WORLD);
-    MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_B, pong,
-                     MPI_COMM_WORLD, &status);
-  }
-  else if (my_rank == proc_B) 
-  { 
-    MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_A, ping,
-                     MPI_COMM_WORLD, &status);
-    MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_A, pong,
-                     MPI_COMM_WORLD);
-  }
-
   start = MPI_Wtime();
-  for (i = 1; i <= number_of_messages; i++)
-  {
-    if (my_rank == proc_A) 
-    {
-      MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_B, ping,
-                       MPI_COMM_WORLD);
-      MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_B, pong,
-                       MPI_COMM_WORLD, &status);
-    }
-    else if (my_rank == proc_B) 
-    { 
-      MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_A, ping,
-                       MPI_COMM_WORLD, &status);
-      MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_A, pong,
-                       MPI_COMM_WORLD);
-    }
-  }
+
   finish = MPI_Wtime();
 
   if (my_rank == proc_A) 

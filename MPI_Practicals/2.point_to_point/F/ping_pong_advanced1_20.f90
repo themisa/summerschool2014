@@ -20,7 +20,7 @@ PROGRAM pingpong
 ! Purpose: A program to try MPI_Ssend and MPI_Recv.            !
 !                                                              !
 ! Contents: F-Source                                           !
-!                                                              !
+!modified by Themis Athanassiadou                                                              !
 !==============================================================!
 
   USE mpi
@@ -59,27 +59,10 @@ PROGRAM pingpong
 
   CALL MPI_COMM_RANK(MPI_COMM_WORLD, my_rank, ierror)
 
-  IF (my_rank .EQ. proc_a) THEN
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_b, ping, MPI_COMM_WORLD, ierror)
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_b, pong, MPI_COMM_WORLD, status, ierror)
-  ELSE IF (my_rank .EQ. proc_b) THEN
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_a, ping, MPI_COMM_WORLD, status, ierror)
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_a, pong, MPI_COMM_WORLD, ierror)
-  END IF
+ 
+  ! Modify your ping-pong code such that you exchange one message before entering the 50                                         ! message loop
 
   start = MPI_WTIME()
-
-  DO i = 1, number_of_messages
-
-     IF (my_rank .EQ. proc_a) THEN
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_b, ping, MPI_COMM_WORLD, ierror)
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_b, pong, MPI_COMM_WORLD, status, ierror)
-     ELSE IF (my_rank .EQ. proc_b) THEN
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_a, ping, MPI_COMM_WORLD, status, ierror)
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_a, pong, MPI_COMM_WORLD, ierror)
-     END IF
-
-  END DO
 
   finish = MPI_WTIME()
 

@@ -20,8 +20,10 @@ PROGRAM pingpong
 ! Purpose: A program to try MPI_Ssend and MPI_Recv.            !
 !                                                              !
 ! Contents: F-Source                                           !
-!                                                              !
+!modified by Themis Athanassiadou                                                              !
 !==============================================================!
+
+! This code times the average time it takes for 2 processes to exchange a message
 
   USE mpi
 
@@ -33,11 +35,11 @@ PROGRAM pingpong
   INTEGER proc_b
   PARAMETER(proc_b=1)                
 
-  INTEGER ping
-  PARAMETER(ping=17)
+  INTEGER ping    
+  PARAMETER(ping=17) ! message tag
         
   INTEGER pong
-  PARAMETER(pong=23)        
+  PARAMETER(pong=23) ! message tag       
 
   INTEGER number_of_messages 
   PARAMETER (number_of_messages=50)
@@ -61,17 +63,8 @@ PROGRAM pingpong
 
   start = MPI_WTIME()
 
-  DO i = 1, number_of_messages
-
-     IF (my_rank .EQ. proc_a) THEN
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_b, ping, MPI_COMM_WORLD, ierror)
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_b, pong, MPI_COMM_WORLD, status, ierror)
-     ELSE IF (my_rank .EQ. proc_b) THEN
-        CALL MPI_RECV(buffer, length, MPI_REAL, proc_a, ping, MPI_COMM_WORLD, status, ierror)
-        CALL MPI_SEND(buffer, length, MPI_REAL, proc_a, pong, MPI_COMM_WORLD, ierror)
-     END IF
-
-  END DO
+  ! write a loop of number_of_messages iterations. Within the loop, process A sends a message
+  !  (ping) to process B. After receiving the message, process B sends a message (pong) to process A) 
 
   finish = MPI_WTIME()
 

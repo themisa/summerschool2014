@@ -18,7 +18,7 @@
  * Purpose: A program to try MPI_Ssend and MPI_Recv.            *
  *                                                              *
  * Contents: C-Source                                           *
- *                                                              *
+ * modified by Themis Athanassiadou                                             *
  ****************************************************************/
 
 
@@ -27,18 +27,18 @@
 
 #define proc_A 0
 #define proc_B 1
-#define ping  17
-#define pong  23
+#define ping  17 //message tag
+#define pong  23 //message tag
 #define number_of_messages 50
 #define length_of_message   1
+
+/* This code times the average time it takes for 2 processes to exchange a message */
 
 int main(int argc, char *argv[])
 {
   int my_rank;
 
   float buffer[length_of_message];
-
-  int i;   
 
   double start, finish, time;
 
@@ -50,23 +50,10 @@ int main(int argc, char *argv[])
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
   start = MPI_Wtime();
-  for (i = 1; i <= number_of_messages; i++)
-  {
-    if (my_rank == proc_A) 
-    {
-      MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_B, ping,
-                       MPI_COMM_WORLD);
-      MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_B, pong,
-                       MPI_COMM_WORLD, &status);
-    }
-    else if (my_rank == proc_B) 
-    { 
-      MPI_Recv(buffer, length_of_message, MPI_FLOAT, proc_A, ping,
-                       MPI_COMM_WORLD, &status);
-      MPI_Send(buffer, length_of_message, MPI_FLOAT, proc_A, pong,
-                       MPI_COMM_WORLD);
-    }
-  }
+  
+  /* write a loop of number_of_messages iterations. Within the loop, process A sends a message
+     (ping) to process B. After receiving the message, process B sends a message (pong) to process A) */
+
   finish = MPI_Wtime();
 
   if (my_rank == proc_A) 
