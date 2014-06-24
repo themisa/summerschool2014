@@ -18,14 +18,14 @@
  * Purpose: A program to try MPI_Issend and MPI_Recv.           *
  *                                                              *
  * Contents: C-Source                                           *
- *                                                              *
+ * modified by Themis Athanassiadou                                                              *
  ****************************************************************/
 
 
 #include <stdio.h>
 #include <mpi.h>
 
-#define to_right 201
+
 
 
 int main (int argc, char *argv[])
@@ -45,30 +45,12 @@ int main (int argc, char *argv[])
 
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-  right = (my_rank+1)      % size;
-  left  = (my_rank-1+size) % size;
-/* ... this SPMD-style neighbor computation with modulo has the same meaning as: */
-/* right = my_rank + 1;          */
-/* if (right == size) right = 0; */
-/* left = my_rank - 1;           */
-/* if (left == -1) left = size-1;*/
 
-  sum = 0;
-  snd_buf = my_rank;
+  right = /* get rank of neighbor to your right */
+  left  = /* get rank of neighbor to your left */
 
-  for( i = 0; i < size; i++) 
-  {
-    MPI_Issend(&snd_buf, 1, MPI_INT, right, to_right,
-                          MPI_COMM_WORLD, &request);
-   
-    MPI_Recv(&rcv_buf, 1, MPI_INT, left, to_right,
-                        MPI_COMM_WORLD, &status);
-    
-    MPI_Wait(&request, &status);
-    
-    snd_buf = rcv_buf;
-    sum += rcv_buf;
-  }
+
+    /*Implement ring addition code */
 
   printf ("PE%i:\tSum = %i\n", my_rank, sum);
 
