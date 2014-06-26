@@ -20,7 +20,7 @@ PROGRAM ring
 ! Purpose: A program to try MPI_Allreduce.                     !
 !                                                              !
 ! Contents: F-Source                                           !
-!                                                              !
+! modified by Themis Athanassiadou                                                             !
 !==============================================================!
 
   USE mpi
@@ -35,7 +35,7 @@ PROGRAM ring
 
   CALL MPI_COMM_RANK(MPI_COMM_WORLD, my_rank, ierror)
 
-  CALL MPI_ALLREDUCE(my_rank, sum, 1, MPI_INTEGER, MPI_SUM, MPI_COMM_WORLD, ierror)
+  ! calculate sum of all processes 
 
   WRITE(*,*) "PE", my_rank, ": Sum =", sum
 

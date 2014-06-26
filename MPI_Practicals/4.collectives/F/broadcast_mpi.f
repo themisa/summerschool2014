@@ -1,4 +1,4 @@
-      program mpi_reduction
+      program broadcast
       implicit none
       include 'mpif.h'
       integer rank, data, ierror
@@ -9,7 +9,7 @@
          read (*,*) data
       end if
 ! broadcast the value of data of rank 0 to all ranks
-      call MPI_Bcast(data, 1, MPI_INT, 0, MPI_COMM_WORLD, ierror)
+
       write (*,*) "I am rank", rank, "and the value is", data
       call MPI_Finalize(ierror)
-      end program mpi_reduction
+      end program broadcast

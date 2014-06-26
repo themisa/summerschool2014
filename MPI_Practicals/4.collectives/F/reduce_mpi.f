@@ -8,11 +8,9 @@
 !      read (*,*) input
       input=rank+1
 ! reduce the values of the different ranks in input to result of rank 0 with the operation sum (max, logical and)
-      call MPI_Reduce(input, result, 1, MPI_INT, MPI_SUM, 0,
-     &                MPI_COMM_WORLD, ierror)
+
 ! reduce the values of the different ranks in input to result of all ranks with the operation sum (max, logical and)
-      call MPI_Allreduce(input, result, 1, MPI_INT, MPI_SUM,
-     &                   MPI_COMM_WORLD, ierror);
+
       if (rank.eq.0) then
          write (*,*) 'result', result
       end if

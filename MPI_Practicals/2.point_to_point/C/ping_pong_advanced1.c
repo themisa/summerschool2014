@@ -52,8 +52,10 @@ int main(int argc, char *argv[])
 
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
+  // exchange one message
   start = MPI_Wtime();
 
+  // ping pong
   finish = MPI_Wtime();
 
   if (my_rank == proc_A) 
