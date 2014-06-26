@@ -51,13 +51,13 @@ int main(int argc, char *argv[]){
    rank_bottom=(rank+4)%16;
    rank_left=(rank+16-1)%4+(rank/4)*4;
    rank_right=(rank+1)%4+(rank/4)*4;
-//  derived datatype
-   MPI_Type_vector(SUBDOMAIN, 1, DOMAINSIZE, MPI_DOUBLE, &data_ghost);
-   MPI_Type_commit(&data_ghost);
+//  create a derived datatype (vector) to store the ghost columns!
+  
+
 //  ghost cell exchange with the neighbouring cells in all directions
 //  a) MPI_Send, MPI_Irecv
-//  b) MPI_Isend, MPI_Recv
-//  c) MPI_Sendrecv
+
+
 //  to the top
    MPI_Irecv(&data[2-1+(DOMAINSIZE-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD, &request);
    MPI_Send(&data[2-1+(2-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD);
@@ -67,13 +67,12 @@ int main(int argc, char *argv[]){
    MPI_Send(&data[2-1+(DOMAINSIZE-1-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD);
    MPI_Wait(&request, &status);
 //  to the left
-   MPI_Irecv(&data[DOMAINSIZE-1+(2-1)*DOMAINSIZE], 1, data_ghost, rank_right, 0, MPI_COMM_WORLD, &request);
-   MPI_Send(&data[2-1+(2-1)*DOMAINSIZE], 1, data_ghost, rank_left, 0, MPI_COMM_WORLD);
-   MPI_Wait(&request, &status);
+
+
 //  to the right
-   MPI_Irecv(&data[1-1+(2-1)*DOMAINSIZE], 1, data_ghost, rank_left, 0, MPI_COMM_WORLD, &request);
-   MPI_Send(&data[DOMAINSIZE-1-1+(2-1)*DOMAINSIZE], 1, data_ghost, rank_right, 0, MPI_COMM_WORLD);
-   MPI_Wait(&request, &status);
+
+
+
    if (rank==4){
       printf("data of rank 4 after communication\n");
       for (j=0; j<DOMAINSIZE; j++){

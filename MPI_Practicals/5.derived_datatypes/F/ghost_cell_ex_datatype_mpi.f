@@ -51,15 +51,14 @@
       rank_left=mod(rank+16-4,16)
       rank_top=mod(rank+16-1,4)+(rank/4)*4
       rank_bottom=mod(rank+1,4)+(rank/4)*4
-! derived datatype
-      call MPI_Type_vector(SUBDOMAIN, 1, DOMAINSIZE, MPI_DOUBLE,
-     &                     data_ghost, ierror)
-      call MPI_Type_commit(data_ghost, ierror)
+! create a vector derived datatype to store ghost rows!
+  
+
 !  ghost cell exchange with the neighbouring cells in all directions
+!  the left-right has been done. Exchange top/bottom
 !  a) MPI_Send, MPI_Irecv
-!  b) MPI_Isend, MPI_Recv
-!  c) MPI_Sendrecv
-!  to the left
+
+! to the left
       call MPI_Irecv(data(2,DOMAINSIZE), SUBDOMAIN, MPI_DOUBLE,
      &               rank_right, 0, MPI_COMM_WORLD, request, ierror)
       call MPI_Send(data(2,2), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
@@ -72,17 +71,9 @@
      &              rank_right, 0, MPI_COMM_WORLD, ierror)
       call MPI_Wait(request, status, ierror)
 !  to the top
-      call MPI_Irecv(data(DOMAINSIZE,2), 1, data_ghost, rank_bottom, 0,
-     &               MPI_COMM_WORLD, request, ierror)
-      call MPI_Send(data(2,2), 1, data_ghost, rank_top, 0,
-     &              MPI_COMM_WORLD, ierror)
-      call MPI_Wait(request, status, ierror)
+   
 !  to the bottom
-      call MPI_Irecv(data(1,2), 1, data_ghost, rank_top, 0,
-     &               MPI_COMM_WORLD, request, ierror)
-      call MPI_Send(data(SUBDOMAIN+1,2), 1, data_ghost, rank_bottom, 0,
-     &              MPI_COMM_WORLD, ierror)
-      call MPI_Wait(request, status, ierror)
+   
       if (rank.eq.4) then
          write (*,*) 'data of rank 4 after communication'
          do i=1, DOMAINSIZE, 1
