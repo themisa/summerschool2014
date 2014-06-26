@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <mpi.h>
 
+// process decomposition on 4*4 grid
+
 //|-----------|
 //| 0| 1| 2| 3|
 //|-----------|
@@ -13,6 +15,9 @@
 //|12|13|14|15|
 //|-----------|
 
+//Each process works on a 10*10 (SUBDOMAIN) block of data 
+// the d corresponds to data, g corresponds to "ghost cells"
+// and x are empty (not exchanged for now)
 // xggggggggggx
 // gddddddddddg
 // gddddddddddg
@@ -25,6 +30,10 @@
 // gddddddddddg
 // gddddddddddg
 // xggggggggggx
+
+// task: each rank has to find its top and bottom neighbor and
+// send them the data they need (top array goes to top neighbor
+// and bottom array goes to bottom neighbor)
 
 #define SUBDOMAIN 10
 #define DOMAINSIZE (SUBDOMAIN+2)
@@ -45,35 +54,29 @@ int main(int argc, char *argv[]){
    for (i=0; i<DOMAINSIZE*DOMAINSIZE; i++){
       data[i]=rank;
    }
-   rank_bottom=(rank+4)%16;
-   rank_top=(rank+16-4)%16;
+   rank_bottom=// find the rank of bottom neighbor (use schematic to help)!
+   rank_top=// find the rank of the top neighbor
+
 //  ghost cell exchange with the neighbouring cells on the top and on the bottom
-//  a) MPI_Send, MPI_Irecv
-//  b) MPI_Isend, MPI_Recv
+//  a) MPI_Send, MPI_Irecv, MPI_Wait
+//  b) MPI_Isend, MPI_Recv, MPI_Wait
 //  c) MPI_Sendrecv
 //  to the top
 // a)
-   MPI_Irecv(&data[2-1+(DOMAINSIZE-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD, &request);
-   MPI_Send(&data[2-1+(2-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD);
-   MPI_Wait(&request, &status);
+   
 // b)
-   MPI_Isend(&data[2-1+(2-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD, &request);
-   MPI_Recv(&data[2-1+(DOMAINSIZE-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD, &status);
-   MPI_Wait(&request, &status);
+  
 // c)
-   MPI_Sendrecv(&data[2-1+(2-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, &data[2-1+(DOMAINSIZE-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD, &status);
+  
 //  to the bottom
 // a)
-   MPI_Irecv(&data[2-1+(1-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD, &request);
-   MPI_Send(&data[2-1+(DOMAINSIZE-1)*DOMAINSIZE-1], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD);
-   MPI_Wait(&request, &status);
+  
 // b)
-   MPI_Isend(&data[2-1+(DOMAINSIZE-1)], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, MPI_COMM_WORLD, &request);
-   MPI_Recv(&data[2-1+(1-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD, &status);
-   MPI_Wait(&request, &status);
+  
 // c)
-   MPI_Sendrecv(&data[2-1+(DOMAINSIZE-1)], SUBDOMAIN, MPI_DOUBLE, rank_bottom, 0, &data[2-1+(1-1)*DOMAINSIZE], SUBDOMAIN, MPI_DOUBLE, rank_top, 0, MPI_COMM_WORLD, &status);
-   if (rank==4){
+  
+
+     if (rank==4){
       printf("data of rank 4 after communication\n");
       for (j=0; j<DOMAINSIZE; j++){
          for (i=0; i<DOMAINSIZE; i++){

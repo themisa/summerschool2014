@@ -1,4 +1,4 @@
-
+!// process decomposition on 4*4 grid 
 !  |-----------|
 !  | 0| 4| 8|12|
 !  |-----------|
@@ -9,6 +9,10 @@
 !  | 3| 7|11|15|
 !  |-----------|
 
+!Each process works on a 10*10 (SUBDOMAIN) block of data                                                                               
+! the d corresponds to data, g corresponds to "ghost cells"                                                                            
+! and x are empty (not exchanged for now)      
+
 !  xggggggggggx
 !  gddddddddddg
 !  gddddddddddg
@@ -22,6 +26,10 @@
 !  gddddddddddg
 !  xggggggggggx
 
+
+! task: each rank has to find its left and right neighbor and                                                                          
+! send them the data they need (left array goes to left neighbor                                                                       ! and right array goes to bottom neighbor)
+ 
       program ghost_cell_exchange
       implicit none
       include 'mpif.h'
@@ -45,47 +53,27 @@
             data(i,j)=rank
          end do
       end do
-      rank_right=mod(rank+4,16)
-      rank_left=mod(rank+16-4,16)
+      rank_right=!find the rank of my right neighbour
+      rank_left=!find the rank of my left neighbour
+
 !  ghost cell exchange with the neighbouring cells on the left and on the right
 !  a) MPI_Send, MPI_Irecv
 !  b) MPI_Isend, MPI_Recv
 !  c) MPI_Sendrecv
 !  to the left
 ! a)
-      call MPI_Irecv(data(2,DOMAINSIZE), SUBDOMAIN, MPI_DOUBLE,
-     &               rank_right, 0, MPI_COMM_WORLD, request, ierror)
-      call MPI_Send(data(2,2), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
-     &              MPI_COMM_WORLD, ierror)
-      call MPI_Wait(request, status, ierror)
+
 ! b)
-      call MPI_Isend(data(2,2), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
-     &               MPI_COMM_WORLD, request, ierror)
-      call MPI_Recv(data(2,DOMAINSIZE), SUBDOMAIN, MPI_DOUBLE,
-     &              rank_right, 0, MPI_COMM_WORLD, status, ierror)
-      call MPI_Wait(request, status, ierror)
+
 ! c)
-      call MPI_Sendrecv(data(2,2), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
-     &                  data(2,DOMAINSIZE), SUBDOMAIN, MPI_DOUBLE,
-     &                  rank_right, 0, MPI_COMM_WORLD, status, ierror)
+
 !  to the right
 ! a)
-      call MPI_Irecv(data(2,1), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
-     &               MPI_COMM_WORLD, request, ierror)
-      call MPI_Send(data(2,DOMAINSIZE-1), SUBDOMAIN, MPI_DOUBLE,
-     &              rank_right, 0, MPI_COMM_WORLD, ierror)
-      call MPI_Wait(request, status, ierror);
+
 ! b)
-      call MPI_Isend(data(2,DOMAINSIZE-1), SUBDOMAIN, MPI_DOUBLE,
-     &               rank_right, 0, MPI_COMM_WORLD, request, ierror)
-      call MPI_Recv(data(2,1), SUBDOMAIN, MPI_DOUBLE, rank_left, 0,
-     &              MPI_COMM_WORLD, status, ierror)
-      call MPI_Wait(request, status, ierror);
+
 ! c)
-      call MPI_Sendrecv(data(2,DOMAINSIZE-1), SUBDOMAIN, MPI_DOUBLE,
-     &                  rank_right, 0, data(2,1), SUBDOMAIN, MPI_DOUBLE,
-     &                  rank_left, 0, MPI_COMM_WORLD, status, ierror)
-      if (rank.eq.4) then
+
          write (*,*) 'data of rank 4 after communication'
          do i=1, DOMAINSIZE, 1
             do j=1, DOMAINSIZE, 1
