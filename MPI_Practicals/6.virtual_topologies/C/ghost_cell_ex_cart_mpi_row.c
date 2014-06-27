@@ -48,14 +48,13 @@ int main(int argc, char *argv[]){
       data[i]=rank;
    }
 //  neighbouring ranks with cartesian grid communicator
-   dims[0]=dims[1]=4;
-   periods[0]=periods[1]=1;
 //  we do not allow the reordering of ranks here
 //  an alternative solution would be to allow the reordering and to use the new communicator for the communication
 //  then the MPI library has the opportunity to choose the best rank order with respect to performance
-   MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 0, &comm_cart);
-   MPI_Cart_shift(comm_cart, 0, 1, &rank_top, &rank_bottom);
-   MPI_Cart_shift(comm_cart, 1, 1, &rank_left, &rank_right);
+
+// CREATE a cartesian communicator (4*4) with periodic boundaries and use it to find your neighboring
+// ranks in all dimensions.
+
 //  derived datatype
    MPI_Type_vector(SUBDOMAIN, 1, DOMAINSIZE, MPI_DOUBLE, &data_ghost);
    MPI_Type_commit(&data_ghost);

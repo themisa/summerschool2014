@@ -18,7 +18,7 @@
  * Purpose: Creating a 1-dimensional topology.                  *
  *                                                              *
  * Contents: C-Source                                           *
- *                                                              *
+ * modified by Themis Athanassiadou                                                              *
  ****************************************************************/
 
 
@@ -52,22 +52,12 @@ int main (int argc, char *argv[])
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
   /* Set cartesian topology. */
-  dims[0] = size;
-  periods[0] = 1;
-  reorder = 1;
  
-  MPI_Cart_create(MPI_COMM_WORLD, max_dims, dims, periods,
-                  reorder,&new_comm);
 
-  /* Get coords */
-  MPI_Comm_rank(new_comm, &my_rank);
-  /* MPI_Cart_coords(new_comm, my_rank, max_dims, my_coords); */ 
-
-  /* Get nearest neighbour rank. */
-  MPI_Cart_shift(new_comm, 0, 1, &left, &right);
+   /* Get nearest neighbour rank. */
+ 
 
   /* Compute global sum. */
- 
   sum = 0;
   snd_buf = my_rank;
 

@@ -20,7 +20,7 @@ PROGRAM ring
 ! Purpose: Creating a 1-dimensional topology.                  !
 !                                                              !
 ! Contents: F-Source                                           !
-!                                                              !
+! modified by Themis Athanassiadou                                                              !
 !==============================================================!
 
   USE mpi
@@ -59,18 +59,10 @@ PROGRAM ring
 
 ! Set one-dimensional cartesian topology.
 
-  dims(1) = size
-  periods(1) = .TRUE.
-  reorder = .TRUE.
-
-  CALL MPI_CART_CREATE(MPI_COMM_WORLD, max_dims, dims, &
-                           periods, reorder, new_comm, ierror)
-  CALL MPI_COMM_RANK(new_comm, my_rank, ierror)
-! CALL MPI_CART_COORDS(new_comm,my_rank, max_dims, coords, ierror) 
-
+ 
 ! Get nearest neighbour ranks.
 
-  CALL MPI_CART_SHIFT(new_comm, 0, 1, left, right, ierror)
+ 
 
 ! Compute sum.
 
@@ -79,9 +71,9 @@ PROGRAM ring
 
   DO i = 1, size
 
-     CALL MPI_ISSEND(snd_buf, 1, MPI_INTEGER, right, to_right, new_comm, request, ierror)
+     CALL MPI_ISSEND(snd_buf, 1, MPI_INTEGER, right, to_right, ________, request, ierror)
 
-     CALL MPI_RECV(rcv_buf, 1, MPI_INTEGER, left, to_right, new_comm, status, ierror)
+     CALL MPI_RECV(rcv_buf, 1, MPI_INTEGER, left, to_right,_______, status, ierror)
 
      CALL MPI_WAIT(request, status, ierror)
 

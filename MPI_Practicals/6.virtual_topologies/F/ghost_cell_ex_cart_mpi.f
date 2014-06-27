@@ -50,19 +50,13 @@
          end do
       end do
 ! neighbouring ranks with cartesian grid communicator
-      dims(1)=4
-      dims(2)=4
-      periods(1)=1
-      periods(2)=1
-! we do not allow the reordering of ranks here
-! an alternative solution would be to allow the reordering and to use the new communicator for the communication
+!we do not allow the reordering of ranks here                                                                                        
+! an alternative solution would be to allow the reordering and to use the new communicator for the communication                      
 ! then the MPI library has the opportunity to choose the best rank order with respect to performance
-      call MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 0,
-     &                     comm_cart, ierror)
-      call MPI_Cart_shift(comm_cart, 0, 1, rank_left, rank_right,
-     &                    ierror)
-      call MPI_Cart_shift(comm_cart, 1, 1, rank_top, rank_bottom,
-     &                    ierror)
+ 
+! CREATE a cartesian communicator (4*4) with periodic boundaries and use it to find your neighboring                                   
+!ranks in all dimensions.                           
+  
 ! derived datatype
       call MPI_Type_vector(SUBDOMAIN, 1, DOMAINSIZE, MPI_DOUBLE,
      &                     data_ghost, ierror)
